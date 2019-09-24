@@ -8,22 +8,22 @@ import org.junit.jupiter.api.Test;
 public class SwitchExampleTest {
 
 	@Test
-	void testDog() {
+	public void testDog() {
 		assertEquals(1, SwitchExample.switchExample("dog"));
 	}
 
 	@Test
-	void testCat() {
+	public void testCat() {
 		assertEquals(2, SwitchExample.switchExample("cat"));
 	}
 
 	@Test
-	void testDefault() {
+	public void testDefault() {
 		assertEquals(4, SwitchExample.switchExample("toto"));
 	}
 
 	@Test
-	void testNull() {
+	public void testNull() {
 		assertThrows(NullPointerException.class, () -> SwitchExample.switchExample(null));
 	}
 }
