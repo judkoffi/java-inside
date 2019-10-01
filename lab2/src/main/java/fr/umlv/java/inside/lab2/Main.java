@@ -14,11 +14,10 @@ public class Main {
 		return Character.toLowerCase(name.charAt(3)) + name.substring(4);
 	}
 
-	private static String buildJSONLine(Object object, Method method) {
-		var property = propertyName(method.getName());
+	private static Object invokeGetter(Object object, Method method) {
+
 		try {
-			var value = method.invoke(object);
-			return "\"" + property + "\"" + ":" + "\"" + value + "\"";
+			return method.invoke(object);
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException(e);
 		} catch (InvocationTargetException e) {
@@ -33,16 +32,34 @@ public class Main {
 		}
 	}
 
+	private static String buildJSONLine(Object object, Method method) {
+		var property = propertyName(method.getName());
+		var value = invokeGetter(object, method);
+		return "\"" + property + "\"" + ":" + "\"" + value + "\"";
+	}
+	
+
+
 	public static String toJSON(Object object) {
 
 		var methods = object.getClass().getMethods();
 
-		return Arrays
-				.stream(methods)
-				.filter((method) -> method.getName().startsWith("get"))
+		/*return Arrays.stream(methods).filter((method) -> method.getName().startsWith("get"))
 				.filter((method) -> method.getDeclaringClass() != Object.class)
 				.sorted(Comparator.comparing(Method::getName))
-				.map((method) -> buildJSONLine(object, method)).collect(joining(",", "{", "}"));
+				.map((method) -> buildJSONLine(object, method))
+				.collect(joining(",", "{", "}"));
+		 */
+		
+		
+		 return Arrays
+				 .stream(methods)
+				 .filter((method) -> method.isAnnotationPresent(JSONProperty.class))
+				 .filter((method) -> method.getName().startsWith("get"))
+				 .map((method) -> buildJSONLine(object, method))
+				 .collect(joining(",", "{", "}"));
+		 
+
 	}
 
 	public static void main(String[] args) {

@@ -11,10 +11,12 @@ public class Person {
 		this.lastName = Objects.requireNonNull(lastName);
 	}
 
+	@JSONProperty("firstname")
 	public String getFirstName() {
 		return firstName;
 	}
 
+	@JSONProperty("lastname")
 	public String getLastName() {
 		return lastName;
 	}
