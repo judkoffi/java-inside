@@ -17,10 +17,12 @@ public class JSONTest {
 			this.lastName = Objects.requireNonNull(lastName);
 		}
 
+		@JSONProperty("firstname")
 		public String getFirstName() {
 			return firstName;
 		}
 
+		@JSONProperty("lastname")
 		public String getLastName() {
 			return lastName;
 		}
@@ -38,37 +40,33 @@ public class JSONTest {
 			this.age = age;
 		}
 
+		@JSONProperty("planet")
 		public String getPlanet() {
 			return planet;
 		}
 
+		@JSONProperty("age")
 		public int getAge() {
 			return age;
 		}
 	}
 
-	public static class A {
-		private final String field;
-
-		public A(String field) {
-			this.field = Objects.requireNonNull(field);
-		}
-
-		private String getField() {
-			return this.field;
+	public static class B {
+		public B() {
 		}
 	}
 
 	@Test
 	public void testGoodParsing() {
 		var person = new Person("John", "Doe");
-		var result = "{\"firstName\":\"John\",\"lastName\":\"Doe\"}";
-		assertEquals(result, Main.toJSON(person));
+		var result = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
+		assertEquals(result, JSONBuilder.toJSON(person));
 	}
 
-	/*@Test
-	public void testExceptionParsing() {
-		assertThrows(IllegalStateException.class, () -> Main.toJSON(new A("")));
-	}*/
+	@Test
+	public void testClassWithoutGetterParsing() {
+		var b = new B();
+		assertEquals("{}", JSONBuilder.toJSON(b));
+	}
 
 }

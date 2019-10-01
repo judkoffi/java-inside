@@ -8,7 +8,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
 import java.util.Comparator;
 
-public class Main {
+public class JSONBuilder {
 
 	private static String propertyName(String name) {
 		return Character.toLowerCase(name.charAt(3)) + name.substring(4);
@@ -32,33 +32,31 @@ public class Main {
 		}
 	}
 
-	private static String buildJSONLine(Object object, Method method) {
-		var property = propertyName(method.getName());
-		var value = invokeGetter(object, method);
-		return "\"" + property + "\"" + ":" + "\"" + value + "\"";
+	private static String buildJSONLine(Object object, Method annotedMethod) {
+		var valueOfAnnotation = annotedMethod.getAnnotation(JSONProperty.class).value();
+		var propertyName = isValidString(valueOfAnnotation) ? valueOfAnnotation : propertyName(annotedMethod.getName());
+		var value = invokeGetter(object, annotedMethod);
+		return "\"" + propertyName + "\"" + ":" + "\"" + value + "\"";
 	}
-	
 
+	public static boolean isValidString(String str) {
+		return ((!str.equals("")) && (str != null) && (str.matches("^[a-zA-Z]*$")));
+	}
 
 	public static String toJSON(Object object) {
 
 		var methods = object.getClass().getMethods();
 
-		/*return Arrays.stream(methods).filter((method) -> method.getName().startsWith("get"))
-				.filter((method) -> method.getDeclaringClass() != Object.class)
-				.sorted(Comparator.comparing(Method::getName))
-				.map((method) -> buildJSONLine(object, method))
-				.collect(joining(",", "{", "}"));
+		/*
+		 * return Arrays.stream(methods).filter((method) ->
+		 * method.getName().startsWith("get")) .filter((method) ->
+		 * method.getDeclaringClass() != Object.class)
+		 * .sorted(Comparator.comparing(Method::getName)) .map((method) ->
+		 * buildJSONLine(object, method)) .collect(joining(",", "{", "}"));
 		 */
-		
-		
-		 return Arrays
-				 .stream(methods)
-				 .filter((method) -> method.isAnnotationPresent(JSONProperty.class))
-				 .filter((method) -> method.getName().startsWith("get"))
-				 .map((method) -> buildJSONLine(object, method))
-				 .collect(joining(",", "{", "}"));
-		 
+
+		return Arrays.stream(methods).filter((method) -> method.isAnnotationPresent(JSONProperty.class))
+				.map((annotedMethod) -> buildJSONLine(object, annotedMethod)).collect(joining(",", "{", "}"));
 
 	}
 
