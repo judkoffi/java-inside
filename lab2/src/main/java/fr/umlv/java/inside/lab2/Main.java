@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
+import java.util.Comparator;
 
 public class Main {
 
@@ -17,7 +18,7 @@ public class Main {
 		var property = propertyName(method.getName());
 		try {
 			var value = method.invoke(object);
-			return "\"" + property + "\"" + ": " + "\"" + value + "\"";
+			return "\"" + property + "\"" + ":" + "\"" + value + "\"";
 		} catch (IllegalAccessException e) {
 			throw new IllegalStateException(e);
 		} catch (InvocationTargetException e) {
@@ -36,8 +37,12 @@ public class Main {
 
 		var methods = object.getClass().getMethods();
 
-		return Arrays.stream(methods).filter((method) -> method.getName().startsWith("get"))
-				.map((method) -> buildJSONLine(object, method)).collect(joining(",", " {", "}"));
+		return Arrays
+				.stream(methods)
+				.filter((method) -> method.getName().startsWith("get"))
+				.filter((method) -> method.getDeclaringClass() != Object.class)
+				.sorted(Comparator.comparing(Method::getName))
+				.map((method) -> buildJSONLine(object, method)).collect(joining(",", "{", "}"));
 	}
 
 	public static void main(String[] args) {

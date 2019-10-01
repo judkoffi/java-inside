@@ -6,6 +6,10 @@ matrix:
     - os: linux
     - os: osx
 
-script:
-  - cd lab1
-  - mvn package
+  lab1:
+      - cd lab1
+      - mvn package
+
+  lab2:
+      - cd lab2
+      - mvn package
