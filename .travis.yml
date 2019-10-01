@@ -4,12 +4,12 @@ jdk: openjdk13
 matrix:
   include:
     - os: linux
+      env:
+        - FOLDER=lab1
     - os: osx
+      env:
+        - FOLDER=lab2
 
-  lab1:
-      - cd lab1
-      - mvn package
-
-  lab2:
-      - cd lab2
-      - mvn package
+script:
+  - cd $FOLDER
+  - mvn package
