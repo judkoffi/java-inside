@@ -57,11 +57,19 @@ public class JSONTest {
 	}
 
 	@Test
-	public void testGoodParsing() {
+	public void testPersonParsing() {
 		var person = new Person("John", "Doe");
 		var result = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
 		assertEquals(result, JSONBuilder.toJSON(person));
 	}
+	
+	@Test
+	public void testAlienParsing() {
+		var alien = new Alien("Neptune", 50);
+		var result = "{\"planet\":\"Neptune\",\"age\":\"50\"}";
+		assertEquals(result, JSONBuilder.toJSON(alien));
+	}
+
 
 	@Test
 	public void testClassWithoutGetterParsing() {
