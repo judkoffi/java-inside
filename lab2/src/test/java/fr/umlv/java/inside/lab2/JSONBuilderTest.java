@@ -2,6 +2,7 @@ package fr.umlv.java.inside.lab2;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
