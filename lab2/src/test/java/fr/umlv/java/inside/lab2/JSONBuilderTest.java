@@ -1,15 +1,15 @@
 package fr.umlv.java.inside.lab2;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
 public class JSONBuilderTest {
 
-	public static class Person {
+	private static class Person {
 		private final String firstName;
 		private final String lastName;
 
@@ -29,7 +29,7 @@ public class JSONBuilderTest {
 		}
 	}
 
-	public static class Alien {
+	private static class Alien {
 		private final String planet;
 		private final int age;
 
@@ -52,7 +52,7 @@ public class JSONBuilderTest {
 		}
 	}
 
-	public static class B {
+	private static class B {
 		public B() {
 		}
 	}
@@ -63,7 +63,7 @@ public class JSONBuilderTest {
 		var expected = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
 		assertEquals(expected, JSONBuilder.toJSON(person));
 	}
-	
+
 	@Test
 	public void testAlienParsing() {
 		var alien = new Alien("Neptune", 50);
@@ -71,11 +71,19 @@ public class JSONBuilderTest {
 		assertEquals(expected, JSONBuilder.toJSON(alien));
 	}
 
-
 	@Test
 	public void testClassWithoutGetterParsing() {
 		var b = new B();
 		assertEquals("{}", JSONBuilder.toJSON(b));
 	}
 
+	@Test
+	public void testIllegealArgumentException() {
+		assertThrows(IllegalArgumentException.class, () -> new Alien("GreenEarth", 0));
+	}
+	
+	@Test
+	public void testNPE() {
+		assertThrows(NullPointerException.class, () -> JSONBuilder.toJSON(null));
+	}
 }
