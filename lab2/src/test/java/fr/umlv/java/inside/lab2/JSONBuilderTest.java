@@ -6,7 +6,7 @@ import java.util.Objects;
 
 import org.junit.jupiter.api.Test;
 
-public class JSONTest {
+public class JSONBuilderTest {
 
 	public static class Person {
 		private final String firstName;
@@ -59,15 +59,15 @@ public class JSONTest {
 	@Test
 	public void testPersonParsing() {
 		var person = new Person("John", "Doe");
-		var result = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
-		assertEquals(result, JSONBuilder.toJSON(person));
+		var expected = "{\"firstname\":\"John\",\"lastname\":\"Doe\"}";
+		assertEquals(expected, JSONBuilder.toJSON(person));
 	}
 	
 	@Test
 	public void testAlienParsing() {
 		var alien = new Alien("Neptune", 50);
-		var result = "{\"planet\":\"Neptune\",\"age\":\"50\"}";
-		assertEquals(result, JSONBuilder.toJSON(alien));
+		var expected = "{\"age\":\"50\",\"planet\":\"Neptune\"}";
+		assertEquals(expected, JSONBuilder.toJSON(alien));
 	}
 
 

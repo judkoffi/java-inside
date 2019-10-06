@@ -6,18 +6,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Arrays;
-
-import fr.umlv.java.inside.lab2.JSONTest.Alien;
+import java.util.Comparator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class JSONBuilder {
-
-	private final static ClassValue<Method[]> cachedMethods = new ClassValue<Method[]>() {
-
-		@Override
-		protected Method[] computeValue(Class<?> type) {
-			return type.getMethods();
-		}
-	};
 
 	private static String propertyName(String name) {
 		return Character.toLowerCase(name.charAt(3)) + name.substring(4);
@@ -52,12 +45,29 @@ public class JSONBuilder {
 		return ((!str.equals("")) && (str != null) && (str.matches("^[a-zA-Z]*$")));
 	}
 
+	private final static ClassValue<Method[]> cachedMethods = new ClassValue<Method[]>() {
+		@Override
+		protected Method[] computeValue(Class<?> type) {
+			return type.getMethods();
+		}
+	};
+
+	private final static ClassValue<Function<Object, String>> cache = new ClassValue<Function<Object, String>>() {
+		@Override
+		protected Function<Object, String> computeValue(Class<?> type) {
+			var methods = Arrays.stream(type.getMethods())
+					.filter((method) -> method.isAnnotationPresent(JSONProperty.class))
+					.sorted(Comparator.comparing(Method::getName)).collect(Collectors.toList());
+
+			return (sourceObject) -> methods.stream().map((annotedMethod) -> buildJSONLine(sourceObject, annotedMethod))
+					.collect(joining(",", "{", "}"));
+		}
+	};
+
 	public static String toJSON(Object object) {
 
-		//var methods = object.getClass().getMethods();
+		// var methods = cachedMethods.get(object.getClass());
 
-		var methods = cachedMethods.get(object.getClass());
-		
 		/*
 		 * return Arrays.stream(methods).filter((method) ->
 		 * method.getName().startsWith("get")) .filter((method) ->
@@ -66,16 +76,14 @@ public class JSONBuilder {
 		 * buildJSONLine(object, method)) .collect(joining(",", "{", "}"));
 		 */
 
-		return Arrays.stream(methods).filter((method) -> method.isAnnotationPresent(JSONProperty.class))
-				.map((annotedMethod) -> buildJSONLine(object, annotedMethod)).collect(joining(",", "{", "}"));
+		/*
+		 * return Arrays.stream(methods).filter((method) ->
+		 * method.isAnnotationPresent(JSONProperty.class))
+		 * .sorted(Comparator.comparing(Method::getName)) .map((annotedMethod) ->
+		 * buildJSONLine(object, annotedMethod)).collect(joining(",", "{", "}"));
+		 */
+
+		return cache.get(object.getClass()).apply(object);
 
 	}
-
-	public static void main(String[] args) {
-		var person = new Person("John", "Doe");
-		System.out.println(toJSON(person));
-		var alien = new Alien("Neptune", 50);
-		System.out.println(toJSON(alien));
-	}
-
 }
