@@ -72,4 +72,49 @@ public class ExampleTest {
 
 		assertEquals("question 8", (String) insertedArgs.invokeExact(new Example()));
 	}
+
+	@Test
+	public void lookUpaInstancecHelloDropArgs() throws Throwable {
+
+		var lookup = MethodHandles.lookup();
+
+		var privateLookup = MethodHandles.privateLookupIn(Example.class, lookup);
+		var virtualMethod = privateLookup.findVirtual(Example.class, "anInstanceHello",
+				MethodType.methodType(String.class, int.class));
+
+		var dropArgument = MethodHandles.dropArguments(virtualMethod, 1, int.class);
+
+		assertEquals("question 5", (String) dropArgument.invokeExact(new Example(), 9, 5));
+	}
+
+	@Test
+	public void lookUpaInstancecHelloUnboxing() throws Throwable {
+
+		var lookup = MethodHandles.lookup();
+
+		var privateLookup = MethodHandles.privateLookupIn(Example.class, lookup);
+		var virtualMethod = privateLookup
+				.findVirtual(Example.class, "anInstanceHello", MethodType.methodType(String.class, int.class))
+				.asType(MethodType.methodType(String.class, Example.class, Integer.class));
+
+		assertEquals("question 15", (String) virtualMethod.invokeExact(new Example(), Integer.valueOf(15)));
+	}
+
+	@Test
+	public void methodHandleConstant() throws Throwable {
+		var constantHandle = MethodHandles.constant(int.class, 45);
+		assertEquals(45, (int) constantHandle.invokeExact());
+	}
+
+	@Test
+	public void methodHandleGuardWithTest() throws Throwable {
+		var lookup = MethodHandles.lookup();
+		var testHandle = MethodHandles.publicLookup().findVirtual(String.class, "equals",
+				MethodType.methodType(boolean.class, Object.class));
+		var valueTest = (boolean) testHandle.invokeExact("foo", "toto");
+		
+
+		//var guardHandle = MethodHandles.guardWithTest(testHandle, targetHandle, fallbackHandle);
+
+	}
 }

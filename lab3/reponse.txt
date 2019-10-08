@@ -8,3 +8,8 @@ Pour creer une instance, il faut utiliser la methode lookup()
 La méthode  privateLookupIn permet de teleporter un lookup pour avoir access au method private.
 
 La méthode dropArguments​ permet d'ignorer un argument indexé.
+
+
+methodehandler.asType() convertie les types par defaut en d'autres types
+
+MethodHandles.constant() crrer un handle qui retiurne toujours une constante
