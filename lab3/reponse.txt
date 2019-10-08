@@ -6,3 +6,5 @@ LookUp est une classe pour creer des method handle (equivaut à un pointer de fu
 
 Pour creer une instance, il faut utiliser la methode lookup()
 La méthode  privateLookupIn permet de teleporter un lookup pour avoir access au method private.
+
+La méthode dropArguments​ permet d'ignorer un argument indexé.
