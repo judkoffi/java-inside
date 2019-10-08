@@ -1,14 +1,15 @@
 language: java
 jdk: openjdk13
 
-os: 
+os:
 - linux
 #- osx
-    
+
 env:
   matrix:
     - FOLDER=lab1
     - FOLDER=lab2
+    - FOLDER=lab3
 
 script:
   - cd $FOLDER
