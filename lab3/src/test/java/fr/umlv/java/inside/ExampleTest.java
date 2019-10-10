@@ -109,12 +109,19 @@ public class ExampleTest {
 	@Test
 	public void methodHandleGuardWithTest() throws Throwable {
 		var lookup = MethodHandles.lookup();
-		var testHandle = MethodHandles.publicLookup().findVirtual(String.class, "equals",
-				MethodType.methodType(boolean.class, Object.class));
-		var valueTest = (boolean) testHandle.invokeExact("foo", "toto");
-		
+		var testHandle = lookup.findVirtual(String.class, "equals", MethodType.methodType(boolean.class, Object.class));
 
-		//var guardHandle = MethodHandles.guardWithTest(testHandle, targetHandle, fallbackHandle);
+		var succesCallback = MethodHandles.constant(int.class, 1);
+		var targetHandle = MethodHandles.dropArguments(succesCallback, 0, String.class, Object.class);
 
+		var failCallback = MethodHandles.constant(int.class, -1);
+		var fallbackHandle = MethodHandles.dropArguments(failCallback, 0, String.class, Object.class);
+
+		var guardHandle = MethodHandles.guardWithTest(testHandle, targetHandle, fallbackHandle);
+
+		var method = MethodHandles.insertArguments(guardHandle, 1, "foo");
+
+		assertEquals(1, (int) method.invoke("foo"));
+		assertEquals(-1, (int) method.invoke("hello"));
 	}
 }
