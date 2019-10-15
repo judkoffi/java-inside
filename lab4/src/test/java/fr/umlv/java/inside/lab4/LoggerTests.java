@@ -15,6 +15,16 @@ public class LoggerTests {
 			stringBuilder.append(msg);
 		});
 	}
+	
+
+	private static class B {
+		private static final StringBuilder stringBuilder = new StringBuilder();
+		private static final Logger LOGGER = Logger.fastOf(A.class, (msg) -> {
+			stringBuilder.setLength(0);
+			stringBuilder.append(msg);
+		});
+	}
+
 
 	@Test
 	public void testLogger() {
@@ -32,6 +42,25 @@ public class LoggerTests {
 	@Test
 	public void logNull() {
 		assertThrows(NullPointerException.class, () -> A.LOGGER.log(null));
+	}
+
+	
+	@Test
+	public void testFastLogger() {
+		B.LOGGER.log("hello");
+		assertEquals("hello", LoggerTests.B.stringBuilder.toString());
+	}
+
+	@Test
+	public void ofFastNull() {
+		assertAll(() -> assertThrows(NullPointerException.class, () -> Logger.of(B.class, null).log("")),
+				() -> assertThrows(NullPointerException.class, () -> Logger.of(null, __ -> {
+				}).log("")));
+	}
+
+	@Test
+	public void logFastNull() {
+		assertThrows(NullPointerException.class, () -> B.LOGGER.log(null));
 	}
 
 }

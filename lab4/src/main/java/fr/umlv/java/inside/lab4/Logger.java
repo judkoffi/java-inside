@@ -34,6 +34,26 @@ public interface Logger {
 		};
 	}
 
+	private static void lambdaBody(Class<?> declaringClass, String message, MethodHandle mh) {
+		Objects.requireNonNull(message);
+		try {
+			mh.invokeExact(message);
+		} catch (Throwable t) {
+			if (t instanceof RuntimeException) {
+				throw (RuntimeException) t;
+			}
+			if (t instanceof Error) {
+				throw (Error) t;
+			}
+			throw new UndeclaredThrowableException(t);
+		}
+	}
+
+	public static Logger fastOf(Class<?> declaringClass, Consumer<? super String> consumer) {
+		var mh = createLoggingMethodHandle(declaringClass, consumer);
+		return (message) -> lambdaBody(declaringClass, message, mh);
+	}
+
 	private static MethodHandle createLoggingMethodHandle(Class<?> declaringClass, Consumer<? super String> consumer) {
 		MethodHandle mh;
 		try {
