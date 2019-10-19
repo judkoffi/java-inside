@@ -1,0 +1,29 @@
+6.
+Créer une méthode statique fastOf() qui fait exactement la même chose que of() mais utilise une lambda au lieu d'une classe anonyme. 
+Y-a-t'il une différence de performance ? Pourquoi ? 
+
+==> On constate une différence enorme.
+	En effet, lorsqu'on utilise une lambda, elle est considérer comme une constance et les variables qu'elle capture aussi. 
+	Le cout d'accès a une constante est très faible comparer aux variables classique.
+
+
+8.
+Ajouter un test JMH qui crée un Logger que vous désactiverez dans le bloc statique et tester sa vitesse, que pouvez vous en conclure ? 	
+
+	
+Benchmark                                           Mode  Cnt    Score    Error  Units
+LoggerBenchMark.no_op                               avgt   15    0.466 ±  0.024  ns/op
+LoggerBenchMark.no_op_fastOf                        avgt   15    0.460 ±  0.027  ns/op
+LoggerBenchMark.simple_logger                       avgt   15    3.258 ±  0.083  ns/op
+LoggerBenchMark.simple_logger_fastOf                avgt   15    0.437 ±  0.001  ns/op
+LoggerBenchMark.simple_logger_fastOf_enable_test    avgt   15  590.462 ± 73.896  ns/op
+LoggerBenchMark.simple_logger_fastOf_unenable_test  avgt   15  941.740 ± 29.952  ns/op
+
+==> On constate que le temps d'execution lorsqu'on désactive un logger est énorme.
+
+9.
+Que se passe t'il, si il y a plusieurs threads ? si une thread appel enable() et un autre thread appel log() ?
+Pour cela aller lire la doc de MutableCallSite et faite les changements qui s'impose pour que le code marche avec plusieurs threads. 
+
+=> S'il y a plusieurs threads, tous les threeads n'auront pas les valeus à jour dans leurs cache.
+   POur réglé ce problème, il faut utiliser la méthode syncAll.

@@ -49,4 +49,16 @@ public class LoggerBenchMark {
 	public void simple_logger_fastOf() {
 		B.LOGGER.log("toto");
 	}
+
+	@Benchmark
+	public void simple_logger_fastOf_enable_test() {
+		B.LOGGER.log("toto");
+		Logger.enable(B.class, true);
+	}
+
+	@Benchmark
+	public void simple_logger_fastOf_unenable_test() {
+		B.LOGGER.log("toto");
+		Logger.enable(B.class, false);
+	}
 }

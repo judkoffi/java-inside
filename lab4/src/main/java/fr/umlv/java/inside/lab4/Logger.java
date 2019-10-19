@@ -4,7 +4,9 @@ import static java.lang.invoke.MethodType.methodType;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
+import java.lang.invoke.MutableCallSite;
 import java.lang.reflect.UndeclaredThrowableException;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -53,17 +55,42 @@ public interface Logger {
 		var mh = createLoggingMethodHandle(declaringClass, consumer);
 		return (message) -> lambdaBody(declaringClass, message, mh);
 	}
+	/*
+	 * private static MethodHandle createLoggingMethodHandle(Class<?>
+	 * declaringClass, Consumer<? super String> consumer) { MethodHandle mh; var
+	 * lookup = MethodHandles.lookup(); try { mh =
+	 * lookup.findVirtual(Consumer.class, "accept", methodType(void.class,
+	 * Object.class)); } catch (NoSuchMethodException | IllegalAccessException e) {
+	 * throw new AssertionError(e); } mh = mh.bindTo(consumer); // equivaut a
+	 * insertArgument sur la pos 0 mh = mh.asType(methodType(void.class,
+	 * String.class)); return mh; }
+	 */
 
 	private static MethodHandle createLoggingMethodHandle(Class<?> declaringClass, Consumer<? super String> consumer) {
 		MethodHandle mh;
+		MethodHandle mhTest;
+		var lookup = MethodHandles.lookup();
 		try {
-			var lookup = MethodHandles.lookup();
+			mhTest = ENABLE_CALLSITES.get(declaringClass).dynamicInvoker();
 			mh = lookup.findVirtual(Consumer.class, "accept", methodType(void.class, Object.class));
+
 		} catch (NoSuchMethodException | IllegalAccessException e) {
 			throw new AssertionError(e);
 		}
-		mh = mh.bindTo(consumer); // equivaut a insertArgument sur la pos 0
+		mh = mh.bindTo(consumer);
 		mh = mh.asType(methodType(void.class, String.class));
-		return mh;
+		return MethodHandles.guardWithTest(mhTest, mh, MethodHandles.empty(methodType(void.class, String.class)));
+	}
+
+	static final ClassValue<MutableCallSite> ENABLE_CALLSITES = new ClassValue<MutableCallSite>() {
+		protected MutableCallSite computeValue(Class<?> type) {
+			return new MutableCallSite(MethodHandles.constant(boolean.class, true));
+		}
+	};
+
+	public static void enable(Class<?> declaringClass, boolean enable) {
+		var array = new MutableCallSite[] { ENABLE_CALLSITES.get(declaringClass) };
+		MutableCallSite.syncAll(array);
+		ENABLE_CALLSITES.get(declaringClass).setTarget(MethodHandles.constant(boolean.class, enable));
 	}
 }
