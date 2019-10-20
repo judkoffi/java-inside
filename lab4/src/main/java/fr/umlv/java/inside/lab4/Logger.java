@@ -6,10 +6,10 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MutableCallSite;
 import java.lang.reflect.UndeclaredThrowableException;
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.function.Consumer;
 
+@FunctionalInterface
 public interface Logger {
 	public void log(String message);
 
@@ -84,13 +84,14 @@ public interface Logger {
 
 	static final ClassValue<MutableCallSite> ENABLE_CALLSITES = new ClassValue<MutableCallSite>() {
 		protected MutableCallSite computeValue(Class<?> type) {
-			return new MutableCallSite(MethodHandles.constant(boolean.class, true));
+			var mutableCallSite = new MutableCallSite(MethodHandles.constant(boolean.class, true));
+			var array = new MutableCallSite[] { mutableCallSite };
+			MutableCallSite.syncAll(array);
+			return mutableCallSite;
 		}
 	};
 
 	public static void enable(Class<?> declaringClass, boolean enable) {
-		var array = new MutableCallSite[] { ENABLE_CALLSITES.get(declaringClass) };
-		MutableCallSite.syncAll(array);
 		ENABLE_CALLSITES.get(declaringClass).setTarget(MethodHandles.constant(boolean.class, enable));
 	}
 }
