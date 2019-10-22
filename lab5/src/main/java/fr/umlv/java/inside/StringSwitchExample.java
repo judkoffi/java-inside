@@ -23,19 +23,16 @@ public class StringSwitchExample {
 	}
     };
 
+    @SuppressWarnings("preview")
     public static int stringSwitch(String str) {
 	Objects.requireNonNull(str);
+	return switch (str) {
+	case "foo" -> 0;
+	case "bar" -> 1;
+	case "bazz" -> 2;
+	default -> -1;
+	};
 
-	switch (str) {
-	case "foo":
-	    return 0;
-	case "bar":
-	    return 1;
-	case "bazz":
-	    return 2;
-	default:
-	    return -1;
-	}
     }
 
     public static int stringSwitch2(String str) {
