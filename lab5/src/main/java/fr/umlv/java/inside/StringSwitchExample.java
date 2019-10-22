@@ -18,4 +18,19 @@ public class StringSwitchExample {
 			return -1;
 		}
 	}
+	
+	public static int stringSwitch2(String str) {
+		Objects.requireNonNull(str);
+
+		switch (str) {
+		case "foo":
+			return 0;
+		case "bar":
+			return 1;
+		case "bazz":
+			return 2;
+		default:
+			return -1;
+		}
+	}
 }
