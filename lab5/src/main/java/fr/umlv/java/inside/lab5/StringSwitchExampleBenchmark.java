@@ -1,7 +1,10 @@
 package fr.umlv.java.inside.lab5;
 
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
+import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Fork;
 import org.openjdk.jmh.annotations.Measurement;
@@ -13,16 +16,39 @@ import org.openjdk.jmh.annotations.Warmup;
 
 @Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Fork(3)
+@Fork(5)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
 public class StringSwitchExampleBenchmark {
 
-	
-	
-	
+	private static final int ITERATION_NUMBER = 1000000;
+	private static ArrayList<String> list;
+
+	static {
+		String[] strings = { "foo", "tata", "bazz", "toto", "bar", "titi" };
+		list = new ArrayList<String>(ITERATION_NUMBER);
+
+		var r = new Random();
+		int randomValue = r.nextInt(strings.length);
+
+		for (int i = 0; i < ITERATION_NUMBER; i++) {
+			list.add(strings[randomValue]);
+		}
+	}
+
+	@Benchmark
+	public void stringSwitch1() {
+		list.forEach((l) -> StringSwitchExample.stringSwitch(l));
+	}
+
+	@Benchmark
+	public void stringSwitch2() {
+		list.forEach((l) -> StringSwitchExample.stringSwitch(l));
+	}
+
+	@Benchmark
+	public void stringSwitch3() {
+		list.forEach((l) -> StringSwitchExample.stringSwitch(l));
+	}
 }
-
-
-
