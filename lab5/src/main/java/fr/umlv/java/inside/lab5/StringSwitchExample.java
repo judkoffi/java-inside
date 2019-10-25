@@ -1,4 +1,4 @@
-package fr.umlv.java.inside;
+package fr.umlv.java.inside.lab5;
 
 import static java.lang.invoke.MethodHandles.constant;
 import static java.lang.invoke.MethodHandles.dropArguments;
