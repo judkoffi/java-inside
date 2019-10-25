@@ -41,5 +41,4 @@ public class StringSwitchExampleTests {
 				StringSwitchExample::stringSwitch2,
 				StringSwitchExample::stringSwitch3);
 	}
-
 }
