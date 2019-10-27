@@ -14,9 +14,9 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
 
-@Warmup(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
-@Fork(5)
+@Warmup(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
+@Measurement(iterations = 3, time = 1, timeUnit = TimeUnit.SECONDS)
+@Fork(3)
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @State(Scope.Benchmark)
@@ -30,9 +30,9 @@ public class StringSwitchExampleBenchmark {
 		list = new ArrayList<String>(ITERATION_NUMBER);
 
 		var r = new Random();
-		int randomValue = r.nextInt(strings.length);
 
 		for (int i = 0; i < ITERATION_NUMBER; i++) {
+			var randomValue = r.nextInt(strings.length);
 			list.add(strings[randomValue]);
 		}
 	}
@@ -44,11 +44,11 @@ public class StringSwitchExampleBenchmark {
 
 	@Benchmark
 	public void stringSwitch2() {
-		list.forEach((l) -> StringSwitchExample.stringSwitch(l));
+		list.forEach((l) -> StringSwitchExample.stringSwitch2(l));
 	}
 
 	@Benchmark
 	public void stringSwitch3() {
-		list.forEach((l) -> StringSwitchExample.stringSwitch(l));
+		list.forEach((l) -> StringSwitchExample.stringSwitch3(l));
 	}
 }

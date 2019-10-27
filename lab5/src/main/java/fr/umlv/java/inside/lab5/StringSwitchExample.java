@@ -8,7 +8,6 @@ import static java.lang.invoke.MethodType.methodType;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
 import java.lang.invoke.MutableCallSite;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.List;
@@ -20,27 +19,27 @@ public class StringSwitchExample {
 		var lookup = MethodHandles.lookup();
 
 		try {
-			STRING_EQUALS = lookup.findVirtual(String.class, "equals",
-					methodType(boolean.class, Object.class));
+			STRING_EQUALS = lookup.findVirtual(String.class, "equals", methodType(boolean.class, Object.class));
 		} catch (NoSuchMethodException | IllegalAccessException e) {
 			throw new AssertionError(e);
 		}
 	};
 
-	@SuppressWarnings("preview")
 	public static int stringSwitch(String str) {
 		Objects.requireNonNull(str);
-		return switch (str) {
-			case "foo" -> 0;
-			case "bar" -> 1;
-			case "bazz" -> 2;
-			default -> -1;
-		};
-
+		switch (str) {
+		case "foo":
+			return 0;
+		case "bar":
+			return 1;
+		case "bazz":
+			return 2;
+		default:
+			return -1;
+		}
 	}
 
-	private static MethodHandle createMHFromStrings2(String... strings)
-			throws Throwable {
+	private static MethodHandle createMHFromStrings2(String... strings) throws Throwable {
 		var mh = dropArguments(constant(int.class, -1), 0, String.class);
 
 		for (int i = 0; i < strings.length; i++) {
@@ -72,8 +71,7 @@ public class StringSwitchExample {
 		static {
 			var lookup = MethodHandles.lookup();
 			try {
-				SLOW_PATH = lookup.findVirtual(InliningCache.class, "slowPath",
-						methodType(int.class, String.class));
+				SLOW_PATH = lookup.findVirtual(InliningCache.class, "slowPath", methodType(int.class, String.class));
 			} catch (NoSuchMethodException | IllegalAccessException e) {
 				throw new AssertionError(e);
 			}
@@ -91,8 +89,7 @@ public class StringSwitchExample {
 			var index = matches.indexOf(value);
 
 			var mh = guardWithTest(insertArguments(STRING_EQUALS, 1, value),
-					dropArguments(constant(int.class, index), 0, String.class),
-					getTarget());
+					dropArguments(constant(int.class, index), 0, String.class), getTarget());
 
 			setTarget(mh);
 			return index;
