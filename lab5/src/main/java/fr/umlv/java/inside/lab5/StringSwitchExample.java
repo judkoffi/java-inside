@@ -19,7 +19,8 @@ public class StringSwitchExample {
 		var lookup = MethodHandles.lookup();
 
 		try {
-			STRING_EQUALS = lookup.findVirtual(String.class, "equals", methodType(boolean.class, Object.class));
+			STRING_EQUALS = lookup.findVirtual(String.class, "equals",
+					methodType(boolean.class, Object.class));
 		} catch (NoSuchMethodException | IllegalAccessException e) {
 			throw new AssertionError(e);
 		}
@@ -28,18 +29,20 @@ public class StringSwitchExample {
 	public static int stringSwitch(String str) {
 		Objects.requireNonNull(str);
 		switch (str) {
-		case "foo":
-			return 0;
-		case "bar":
-			return 1;
-		case "bazz":
-			return 2;
-		default:
-			return -1;
+			case "foo" :
+				return 0;
+			case "bar" :
+				return 1;
+			case "bazz" :
+				return 2;
+			default :
+				return -1;
 		}
 	}
 
-	private static MethodHandle createMHFromStrings2(String... strings) throws Throwable {
+	/* Equivaut à ecrire une suite if else mais de manière dynamique */
+	private static MethodHandle createMHFromStrings2(String... strings)
+			throws Throwable {
 		var mh = dropArguments(constant(int.class, -1), 0, String.class);
 
 		for (int i = 0; i < strings.length; i++) {
@@ -71,7 +74,8 @@ public class StringSwitchExample {
 		static {
 			var lookup = MethodHandles.lookup();
 			try {
-				SLOW_PATH = lookup.findVirtual(InliningCache.class, "slowPath", methodType(int.class, String.class));
+				SLOW_PATH = lookup.findVirtual(InliningCache.class, "slowPath",
+						methodType(int.class, String.class));
 			} catch (NoSuchMethodException | IllegalAccessException e) {
 				throw new AssertionError(e);
 			}
@@ -79,19 +83,33 @@ public class StringSwitchExample {
 
 		private final List<String> matches;
 
-		public InliningCache(String... matches) {
+		public InliningCache(List<String> matches) {
 			super(methodType(int.class, String.class));
-			this.matches = List.of(matches);
+			this.matches = matches;
 			setTarget(insertArguments(SLOW_PATH, 0, this));
+		}
+
+		private InliningCache(String... matches) {
+			this(List.of(matches));
 		}
 
 		private int slowPath(String value) {
 			var index = matches.indexOf(value);
 
-			var mh = guardWithTest(insertArguments(STRING_EQUALS, 1, value),
-					dropArguments(constant(int.class, index), 0, String.class), getTarget());
+			// Mettre le appel a l'avant
+			/*
+			 * var mh = guardWithTest(insertArguments(STRING_EQUALS, 1, value),
+			 * dropArguments(constant(int.class, index), 0, String.class),
+			 * getTarget());
+			 */
 
-			setTarget(mh);
+
+			// Mettre le appel a l'arriere
+			var mh = guardWithTest(insertArguments(STRING_EQUALS, 1, value),
+					dropArguments(constant(int.class, index), 0, String.class),
+					new InliningCache(matches).dynamicInvoker());
+
+			setTarget(mh);// Rappel la méthode slowPath()
 			return index;
 		}
 	}
