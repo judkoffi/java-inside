@@ -4,22 +4,39 @@ os:
 - linux
 #- osx
 
-
-matrix:
-  env:
-    - FOLDER=lab1
-    - FOLDER=lab2
-    - FOLDER=lab3
-    - FOLDER=lab4
-    - FOLDER=lab5
- script:
-    - cd $FOLDER
-    - mvn package
 jobs:
   include:
-    - stage: jdk13
+    - stage: lab1
       jdk: openjdk13
-    - stage: jdk14
+      env: FOLDER=lab1
+      script:
+        - cd $FOLDER
+        - mvn package
+    - stage: lab2
+      jdk: openjdk13
+      env: FOLDER=lab2
+      script:
+        - cd $FOLDER
+        - mvn package
+    - stage: lab3
+      jdk: openjdk13
+      env: FOLDER=lab3
+      script:
+        - cd $FOLDER
+        - mvn package
+    - stage: lab4
+      jdk: openjdk13
+      env: FOLDER=lab4
+      script:
+        - cd $FOLDER
+        - mvn package
+    - stage: lab5
+      jdk: openjdk13
+      env: FOLDER=lab5
+      script:
+        - cd $FOLDER
+        - mvn package
+    - stage: lab6
       env:
         - FOLDER=lab6
       install:
