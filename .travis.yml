@@ -1,24 +1,32 @@
 language: java
-jdk: openjdk13
+
 
 os:
 - linux
 #- osx
 
-env:
-  matrix:
-    - FOLDER=lab1
-    - FOLDER=lab2
-    - FOLDER=lab3
-    - FOLDER=lab4
-    - FOLDER=lab5
-    - FOLDER=lab6
-
-
-script:
-  - wget https://github.com/forax/java-next/releases/download/untagged-c59655314c1759142c15/jdk-14-loom-linux.tar.gz
-  - tar xvf jdk-14-loom-linux.tar.gz
-  - export JAVA_HOME=`pwd`/jdk-14-loom
-  - echo $JAVA_HOME
-  - cd $FOLDER
-  - mvn package
+jobs:
+  include:
+    - stage: jdk13
+      jdk: openjdk13
+      env:
+        matrix:
+          - FOLDER=lab1
+          - FOLDER=lab2
+          - FOLDER=lab3
+          - FOLDER=lab4
+          - FOLDER=lab5
+      script:
+        - cd $FOLDER
+        - mvn package
+    - stage: jdk14
+      env:
+        - FOLDER=lab6
+      install:
+        - wget https://github.com/forax/java-next/releases/download/untagged-c59655314c1759142c15/jdk-14-loom-linux.tar.gz
+        - tar xvf jdk-14-loom-linux.tar.gz
+        - export JAVA_HOME=`pwd`/jdk-14-loom
+        - echo $JAVA_HOME
+      script:
+        - cd $FOLDER
+        - mvn package
