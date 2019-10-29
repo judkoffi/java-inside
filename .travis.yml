@@ -1,5 +1,5 @@
 language: java
-#jdk: openjdk14
+#jdk: openjdk13
 
 os:
 - linux
@@ -18,7 +18,7 @@ env:
 script:
   - wget https://github.com/forax/java-next/releases/download/untagged-c59655314c1759142c15/jdk-14-loom-linux.tar.gz
   - tar xvf jdk-14-loom-linux.tar.gz
-  - export JAVA_HOME=jdk-14-loom
+  - export JAVA_HOME=`pwd`/jdk-14-loom
   - echo $JAVA_HOME
   - cd $FOLDER
   - mvn package
