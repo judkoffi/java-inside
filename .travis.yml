@@ -3,7 +3,7 @@ jdk: openjdk13
 
 os:
   - linux
-  - osx
+#  - osx
 
 env:
   matrix:
@@ -14,5 +14,5 @@ env:
     - FOLDER="lab5"
 
 script:
-  - cd $TARGET
+  - cd $FOLDER
   - mvn package
