@@ -19,6 +19,6 @@ script:
   - wget https://github.com/forax/java-next/releases/download/untagged-c59655314c1759142c15/jdk-14-loom-linux.tar.gz
   - ls
   - tar xvf jdk-14-loom-linux.tar.gz
-  - export JAVA_HOME=jdk-14-loom
+  - export JAVA_HOME=./jdk-14-loom/
   - cd $FOLDER
   - mvn package
