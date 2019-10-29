@@ -5,5 +5,7 @@ public class Example1 {
 
 		var continuation = new Continuation(new ContinuationScope("hello"),
 				() -> System.out.println("hello contiuation"));
+
+		continuation.run();
 	}
 }
