@@ -14,7 +14,6 @@ env:
     - FOLDER="lab5"
     - FOLDER="lab6"
 
-
 script:
   - cd $FOLDER
   - mvn package

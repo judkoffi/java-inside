@@ -3,6 +3,7 @@ package fr.umlv.java.inside.lab6;
 import java.util.AbstractCollection;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ThreadLocalRandom;
 
 public class Scheduler {
@@ -16,6 +17,7 @@ public class Scheduler {
 
 
   public Scheduler(SCHEDULINGMODE mode) {
+    Objects.requireNonNull(mode);
     this.collection = (mode == SCHEDULINGMODE.RANDOM) ? new ArrayList<Continuation>()
         : new ArrayDeque<Continuation>();
     this.mode = mode;
@@ -26,10 +28,7 @@ public class Scheduler {
     if (continuation == null) {
       throw new IllegalStateException();
     }
-
     collection.add(continuation);
-    // ((ArrayDeque<Continuation>) collection).offer(continuation);
-
     Continuation.yield(scope);
   }
 
