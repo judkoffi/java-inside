@@ -14,4 +14,6 @@ env:
     - FOLDER="lab5"
     - FOLDER="lab6"
 
-script: ./script.sh
+script: 
+  - chmod u+x script.sh 
+  - ./script.sh
